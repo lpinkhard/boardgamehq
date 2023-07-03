@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "api": {
+      "boardgamehq": [
+        "Query"
+      ]
+    }
+  },
+  "lambdaLayers": [],
+  "secretNames": [
+    "bga_client_id"
+  ]
+}

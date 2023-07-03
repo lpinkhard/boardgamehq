@@ -17,6 +17,17 @@
       },
       "api": {
         "boardgamehq": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d2fj7l1p3lrkpn",
+          "type": "cicd"
+        }
+      },
+      "function": {
+        "gameupdate": {
+          "secretsPathAmplifyAppId": "d2fj7l1p3lrkpn"
+        }
       }
     }
   }
