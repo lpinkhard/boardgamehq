@@ -20,7 +20,6 @@ Parameters will be of the form { Name: 'secretName', Value: 'secretValue', ... }
 	REGION
 Amplify Params - DO NOT EDIT */
 
-import { APIGatewayProxyResult } from 'aws-lambda';
 import { DynamoDB, SSM } from 'aws-sdk';
 import axios from 'axios';
 
