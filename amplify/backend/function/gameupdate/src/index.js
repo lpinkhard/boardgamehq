@@ -20,14 +20,14 @@ Parameters will be of the form { Name: 'secretName', Value: 'secretValue', ... }
 	REGION
 Amplify Params - DO NOT EDIT */
 
-import { DynamoDB, SSM } from 'aws-sdk';
+import { AWS } from 'aws-sdk';
 import axios from 'axios';
 
 const apiGraphQLAPIIdOutput = process.env.API_BOARDGAME_GRAPHQLAPIIDOUTPUT;
 const environment = process.env.ENV;
 const boardGameTable = `BoardGame-${apiGraphQLAPIIdOutput}-${environment}`;
 
-const documentClient = new DynamoDB.DocumentClient();
+const documentClient = new AWS.DynamoDB.DocumentClient();
 
 let currentPage = 0;
 
