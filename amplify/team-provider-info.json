@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-boardgamehq-dev-153104-authRole",
+      "UnauthRoleArn": "arn:aws:iam::314711318289:role/amplify-boardgamehq-dev-153104-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::314711318289:role/amplify-boardgamehq-dev-153104-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-boardgamehq-dev-153104-deployment",
+      "UnauthRoleName": "amplify-boardgamehq-dev-153104-unauthRole",
+      "StackName": "amplify-boardgamehq-dev-153104",
+      "StackId": "arn:aws:cloudformation:us-east-1:314711318289:stack/amplify-boardgamehq-dev-153104/dfd090b0-19a5-11ee-a521-0aac1aba32b7",
+      "AmplifyAppId": "d2fj7l1p3lrkpn"
+    },
+    "categories": {
+      "auth": {
+        "boardgamehq13b6d824": {}
+      },
+      "api": {
+        "boardgamehq": {}
+      }
+    }
+  }
+}

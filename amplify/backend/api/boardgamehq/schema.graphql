@@ -1,0 +1,203 @@
+type PlayerProfile
+@model
+@auth(
+  rules: [
+    { allow: owner, operations: [create, read] }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+  ]
+) {
+  id: ID! @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  user: User! @belongsTo
+  gamesPlayed: [GameResult] @hasMany
+  hostedGames: [Game] @hasMany
+  receivedHostRatings: [Rating] @hasMany @auth(rules: [{ allow: owner, operations: [read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  givenHostRatings: [Rating] @hasMany @auth(rules: [{ allow: owner, operations: [read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  owner: String @auth(rules: [{ allow: owner, operations: [read] }])
+}
+
+type HostProfile
+@model
+@auth(
+  rules: [
+    { allow: owner, operations: [create, read] }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+  ]
+) {
+  id: ID! @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  user: User! @belongsTo
+  venues: [Venue] @hasMany
+  hostedGames: [Game] @hasMany
+  receivedPlayerRatings: [Rating] @hasMany @auth(rules: [{ allow: owner, operations: [read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  givenPlayerRatings: [Rating] @hasMany @auth(rules: [{ allow: owner, operations: [read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  owner: String @auth(rules: [{ allow: owner, operations: [read] }])
+}
+
+type User
+@model @searchable
+@auth(
+  rules: [
+    { allow: owner, operations: [read] }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+  ]
+) {
+  id: ID!
+  name: String!
+  playerProfile: PlayerProfile @hasOne @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  hostProfile: HostProfile @hasOne @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  venues: [Venue] @hasMany @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  bookings: [Booking] @hasMany @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  owner: String @auth(rules: [{ allow: owner, operations: [read] }])
+}
+
+type Venue
+@model @searchable
+@auth(
+  rules: [
+    { allow: owner }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+    { allow: private, operations: [read] }
+  ]
+) {
+  id: ID! @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"], operations: [create, read, update, delete] }, { allow: public, operations: [read] }, { allow: private, operations: [read] }])
+  name: String!
+  latitude: Float!
+  longitude: Float!
+  tables: [Table] @hasMany
+  timeslots: [Timeslot] @hasMany
+  hostingUser: User! @belongsTo @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }, { allow: private, operations: [read] }])
+  bookings: [Booking] @hasMany @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }, { allow: private, operations: [create, read] }])
+  owner: String @auth(rules: [{ allow: owner, operations: [read, delete] }])
+}
+
+type Timeslot
+@model @searchable
+@auth(
+  rules: [
+    { allow: owner }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+  ]
+) {
+  id: ID! @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  startTime: AWSDateTime!
+  endTime: AWSDateTime!
+  venue: Venue! @belongsTo @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  bookings: [Booking] @hasMany
+  owner: String @auth(rules: [{ allow: owner, operations: [read, delete] }])
+}
+
+type Table
+@model
+@auth(
+  rules: [
+    { allow: owner }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+  ]
+) {
+  id: ID! @auth(rules: [{ allow: owner, operations: [read, delete] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  number: Int!
+  capacity: Int!
+  games: Game @hasOne
+  venue: Venue @belongsTo @auth(rules: [{ allow: owner, operations: [create, read] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  bookings: [Booking] @hasMany
+  owner: String @auth(rules: [{ allow: owner, operations: [read, delete] }])
+}
+
+type BoardGame
+@model @searchable
+@auth(
+  rules: [
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+  ]
+) {
+  id: ID!
+  bgaId: String! @index
+  name: String!
+  description: String
+  minPlayers: Int!
+  maxPlayers: Int!
+  category: String
+  imageUrl: String
+}
+
+type Game
+@model
+@auth(
+  rules: [
+    { allow: owner }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+  ]
+) {
+  id: ID! @auth(rules: [{ allow: owner, operations: [read, delete] }, { allow: groups, groups: ["Admin"] }, { allow: public, operations: [read] }])
+  name: String!
+  description: String!
+  boardGame: BoardGame! @hasOne
+  players: Int!
+  table: Table @belongsTo
+  isPrivate: Boolean!
+  cost: Float
+  currency: String!
+  results: [GameResult] @hasMany
+  owner: String @auth(rules: [{ allow: owner, operations: [read, delete] }])
+}
+
+type GameResult
+@model
+@auth(
+  rules: [
+    { allow: owner }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+  ]
+) {
+  id: ID!
+  playerProfile: PlayerProfile @belongsTo
+  game: Game! @belongsTo
+  score: Int!
+  outcome: String!
+  owner: String @auth(rules: [{ allow: owner, operations: [read, delete] }])
+}
+
+type Rating
+@model
+@auth(
+  rules: [
+    { allow: owner, operations: [read] }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+  ]
+) {
+  id: ID!
+  playerProfile: PlayerProfile @belongsTo
+  hostProfile: HostProfile @belongsTo
+  rating: Int!
+  comment: String
+  owner: String @auth(rules: [{ allow: owner, operations: [read] }])
+}
+
+type Booking
+@model
+@auth(
+  rules: [
+    { allow: owner, operations: [create, read] }
+    { allow: groups, groups: ["Admin"] }
+    { allow: public, operations: [read] }
+    { allow: private, operations: [create, read] }
+  ]
+) {
+  id: ID!
+  user: User! @belongsTo
+  venue: Venue! @belongsTo
+  table: Table! @belongsTo
+  timeslot: Timeslot! @belongsTo
+  paymentStatus: String @auth(rules: [{ allow: groups, groups: ["Admin"] }, { allow: owner, operations: [read] }])
+  paymentReceipt: String @auth(rules: [{ allow: groups, groups: ["Admin"] }, { allow: owner, operations: [read] }])
+  owner: String @auth(rules: [{ allow: owner, operations: [read] }])
+}

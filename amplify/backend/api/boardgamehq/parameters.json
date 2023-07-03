@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "boardgamehq",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authboardgamehq13b6d824",
+      "Outputs.UserPoolId"
+    ]
+  }
+}

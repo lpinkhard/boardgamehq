@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "boardgamehq",
+    "serviceName": "AppSync",
+    "defaultAuthType": {
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authboardgamehq13b6d824"
+    },
+    "additionalAuthTypes": [
+      {
+        "mode": "API_KEY",
+        "expirationTime": 365,
+        "apiKeyExpirationDate": "2024-07-02T13:37:40.247Z",
+        "keyDescription": "Boardgame HQ"
+      },
+      {
+        "mode": "AWS_IAM"
+      }
+    ]
+  }
+}
