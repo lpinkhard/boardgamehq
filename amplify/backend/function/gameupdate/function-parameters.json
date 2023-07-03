@@ -6,7 +6,15 @@
       ]
     }
   },
-  "lambdaLayers": [],
+  "lambdaLayers": [
+    {
+      "type": "ProjectLayer",
+      "resourceName": "boardgamehqfunctionlayer",
+      "env": "dev",
+      "version": "Always choose latest version",
+      "isLatestVersionSelected": true
+    }
+  ],
   "secretNames": [
     "bga_client_id"
   ]

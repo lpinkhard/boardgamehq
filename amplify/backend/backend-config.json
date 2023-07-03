@@ -64,9 +64,21 @@
     }
   },
   "function": {
+    "boardgamehqfunctionlayer": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "LambdaLayer"
+    },
     "gameupdate": {
       "build": true,
       "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "boardgamehqfunctionlayer"
+        },
         {
           "attributes": [
             "GraphQLAPIIdOutput",
