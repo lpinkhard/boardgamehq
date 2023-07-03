@@ -137,7 +137,25 @@ async function updateGameData(data) {
                 }
             });
         } catch (err) {
-            console.log(err);
+            try {
+                putParams.Item = {
+                    bgaId: game.bgaId,
+                    name: game.name,
+                    description: game.description,
+                    minPlayers: game.minPlayers,
+                    maxPlayers: game.maxPlayers,
+                    minPlaytime: game.minPlaytime,
+                    maxPlaytime: game.maxPlaytime,
+                    imageUrl: game.imageUrl
+                };
+                documentClient.put(putParams, (putErr, putData) => {
+                    if (putErr) {
+                        console.log('Error', err);
+                    }
+                });
+            } catch (putErr) {
+                console.log(putErr);
+            }
         }
     }
 }
