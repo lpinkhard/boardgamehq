@@ -20,23 +20,16 @@ Parameters will be of the form { Name: 'secretName', Value: 'secretValue', ... }
 	REGION
 Amplify Params - DO NOT EDIT */
 
-import { AWS } from 'aws-sdk';
-import axios from 'axios';
+const aws = require('aws-sdk');
+const axios = require('axios');
 
-const apiGraphQLAPIIdOutput = process.env.API_BOARDGAME_GRAPHQLAPIIDOUTPUT;
+const apiGraphQLAPIIdOutput = process.env.API_BOARDGAMEHQ_GRAPHQLAPIIDOUTPUT;
 const environment = process.env.ENV;
 const boardGameTable = `BoardGame-${apiGraphQLAPIIdOutput}-${environment}`;
 
-const documentClient = new AWS.DynamoDB.DocumentClient();
+const documentClient = new aws.DynamoDB.DocumentClient();
 
 let currentPage = 0;
-
-const { Parameters } = await (new SSM())
-    .getParameters({
-        Names: ["bga_client_id"].map(secretName => process.env[secretName]),
-        WithDecryption: true,
-    })
-    .promise();
 
 /**
  * Fetches game data from Board Game Atlas API.
@@ -47,9 +40,15 @@ const { Parameters } = await (new SSM())
  *
  */
 async function fetchGameData(page) {
+    const { Parameters } = await (new aws.SSM())
+        .getParameters({
+            Names: ["bga_client_id"].map(secretName => process.env[secretName]),
+            WithDecryption: true,
+        })
+        .promise();
     const clientId = Parameters[0].Value;
     const skip = (page - 1) * 100;
-    const url = `https://api.boardgameatlas.com/api/search?limit=100&skip=${skip}&fields=id,name,description,min_players,max_players,category,image_url&client_id=${clientId}`;
+    const url = `https://api.boardgameatlas.com/api/search?limit=100&skip=${skip}&fields=id,name,description,min_players,max_players,min_playtime,max_playtime,image_url&client_id=${clientId}`;
     const response = await axios.get(url);
 
     const games = response.data.games;
@@ -82,25 +81,61 @@ async function fetchGameData(page) {
  *
  */
 async function updateGameData(data) {
+    const updateParams = {
+        TableName: boardGameTable,
+        Key: {},
+        UpdateExpression: 'SET #name = :name, description = :description, minPlayers = :minPlayers, maxPlayers = :maxPlayers, minPlaytime = :minPlaytime, maxPlaytime = :maxPlaytime, imageUrl = :imageUrl',
+        ExpressionAttributeNames: {
+            '#name': 'name'
+        },
+        ExpressionAttributeValues: {},
+        ReturnValues: 'ALL_NEW'
+    };
+
     const putParams = {
         TableName: boardGameTable,
-        Item: {},
-    };
+        Item: {}
+    }
 
     // Update all games in the data set
     for (const game of data) {
-        putParams.Item = {
-            bga_id: game.bgaId,
-            name: game.name,
-            description: game.description,
-            minPlayers: game.minPlayers,
-            maxPlayers: game.maxPlayers,
-            imageUrl: game.imageUrl,
+        updateParams.Key = {
+            bgaId: game.bgaId
+        }
+        updateParams.ExpressionAttributeValues = {
+            ':name': game.name,
+            ':description': game.description,
+            ':minPlayers': game.minPlayers,
+            ':maxPlayers': game.maxPlayers,
+            ':minPlaytime': game.minPlaytime,
+            ':maxPlaytime': game.maxPlaytime,
+            ':imageUrl': game.imageUrl,
         };
 
         try {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            await documentClient.put(putParams);
+            await documentClient.update(updateParams, (err, data) => {
+                if (err) {
+                    if (err.code === 'ValidationException' && err.message.includes('The provided key element does not match the schema')) {
+                        putParams.Item = {
+                            bgaId: game.bgaId,
+                            name: game.name,
+                            description: game.description,
+                            minPlayers: game.minPlayers,
+                            maxPlayers: game.maxPlayers,
+                            minPlaytime: game.minPlaytime,
+                            maxPlaytime: game.maxPlaytime,
+                            imageUrl: game.imageUrl
+                        };
+                        documentClient.put(putParams, (putErr, putData) => {
+                            if (putErr) {
+                                console.log('Error', err);
+                            }
+                        });
+                    } else {
+                        console.log('Error', err);
+                    }
+                }
+            });
         } catch (err) {
             console.log(err);
         }

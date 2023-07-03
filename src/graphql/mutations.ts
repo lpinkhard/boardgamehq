@@ -1594,6 +1594,8 @@ export const createTable = /* GraphQL */ `
           description
           minPlayers
           maxPlayers
+          minPlaytime
+          maxPlaytime
           category
           imageUrl
           createdAt
@@ -1708,6 +1710,8 @@ export const updateTable = /* GraphQL */ `
           description
           minPlayers
           maxPlayers
+          minPlaytime
+          maxPlaytime
           category
           imageUrl
           createdAt
@@ -1822,6 +1826,8 @@ export const deleteTable = /* GraphQL */ `
           description
           minPlayers
           maxPlayers
+          minPlaytime
+          maxPlaytime
           category
           imageUrl
           createdAt
@@ -1928,6 +1934,8 @@ export const createBoardGame = /* GraphQL */ `
       description
       minPlayers
       maxPlayers
+      minPlaytime
+      maxPlaytime
       category
       imageUrl
       createdAt
@@ -1948,6 +1956,8 @@ export const updateBoardGame = /* GraphQL */ `
       description
       minPlayers
       maxPlayers
+      minPlaytime
+      maxPlaytime
       category
       imageUrl
       createdAt
@@ -1968,6 +1978,8 @@ export const deleteBoardGame = /* GraphQL */ `
       description
       minPlayers
       maxPlayers
+      minPlaytime
+      maxPlaytime
       category
       imageUrl
       createdAt
@@ -1992,6 +2004,8 @@ export const createGame = /* GraphQL */ `
         description
         minPlayers
         maxPlayers
+        minPlaytime
+        maxPlaytime
         category
         imageUrl
         createdAt
@@ -2088,6 +2102,8 @@ export const updateGame = /* GraphQL */ `
         description
         minPlayers
         maxPlayers
+        minPlaytime
+        maxPlaytime
         category
         imageUrl
         createdAt
@@ -2184,6 +2200,8 @@ export const deleteGame = /* GraphQL */ `
         description
         minPlayers
         maxPlayers
+        minPlaytime
+        maxPlaytime
         category
         imageUrl
         createdAt
@@ -2316,6 +2334,8 @@ export const createGameResult = /* GraphQL */ `
           description
           minPlayers
           maxPlayers
+          minPlaytime
+          maxPlaytime
           category
           imageUrl
           createdAt
@@ -2413,6 +2433,8 @@ export const updateGameResult = /* GraphQL */ `
           description
           minPlayers
           maxPlayers
+          minPlaytime
+          maxPlaytime
           category
           imageUrl
           createdAt
@@ -2510,6 +2532,8 @@ export const deleteGameResult = /* GraphQL */ `
           description
           minPlayers
           maxPlayers
+          minPlaytime
+          maxPlaytime
           category
           imageUrl
           createdAt

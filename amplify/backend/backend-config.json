@@ -74,19 +74,19 @@
       "dependsOn": [
         {
           "attributes": [
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "boardgamehqfunctionlayer"
-        },
-        {
-          "attributes": [
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput",
             "GraphQLAPIKeyOutput"
           ],
           "category": "api",
           "resourceName": "boardgamehq"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "boardgamehqfunctionlayer"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -101,6 +101,38 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_boardgamehqfunctionlayer_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "boardgamehqfunctionlayer"
+        }
+      ]
+    },
+    "AMPLIFY_function_boardgamehqfunctionlayer_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "boardgamehqfunctionlayer"
+        }
+      ]
+    },
+    "AMPLIFY_function_gameupdate_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "gameupdate"
+        }
+      ]
+    },
+    "AMPLIFY_function_gameupdate_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "gameupdate"
+        }
+      ]
+    },
     "AMPLIFY_function_gameupdate_secretsPathAmplifyAppId": {
       "usedBy": [
         {

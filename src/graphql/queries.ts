@@ -961,6 +961,8 @@ export const getTable = /* GraphQL */ `
           description
           minPlayers
           maxPlayers
+          minPlaytime
+          maxPlaytime
           category
           imageUrl
           createdAt
@@ -1120,6 +1122,8 @@ export const getBoardGame = /* GraphQL */ `
       description
       minPlayers
       maxPlayers
+      minPlaytime
+      maxPlaytime
       category
       imageUrl
       createdAt
@@ -1142,6 +1146,8 @@ export const listBoardGames = /* GraphQL */ `
         description
         minPlayers
         maxPlayers
+        minPlaytime
+        maxPlaytime
         category
         imageUrl
         createdAt
@@ -1175,6 +1181,8 @@ export const boardGamesByBgaId = /* GraphQL */ `
         description
         minPlayers
         maxPlayers
+        minPlaytime
+        maxPlaytime
         category
         imageUrl
         createdAt
@@ -1210,6 +1218,8 @@ export const searchBoardGames = /* GraphQL */ `
         description
         minPlayers
         maxPlayers
+        minPlaytime
+        maxPlaytime
         category
         imageUrl
         createdAt
@@ -1251,6 +1261,8 @@ export const getGame = /* GraphQL */ `
         description
         minPlayers
         maxPlayers
+        minPlaytime
+        maxPlaytime
         category
         imageUrl
         createdAt
@@ -1349,6 +1361,8 @@ export const listGames = /* GraphQL */ `
           description
           minPlayers
           maxPlayers
+          minPlaytime
+          maxPlaytime
           category
           imageUrl
           createdAt
@@ -1437,6 +1451,8 @@ export const getGameResult = /* GraphQL */ `
           description
           minPlayers
           maxPlayers
+          minPlaytime
+          maxPlaytime
           category
           imageUrl
           createdAt

@@ -122,6 +122,8 @@ type BoardGame
   description: String
   minPlayers: Int!
   maxPlayers: Int!
+  minPlaytime: Int!
+  maxPlaytime: Int!
   category: String
   imageUrl: String
 }

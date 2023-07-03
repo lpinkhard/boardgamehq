@@ -26,7 +26,13 @@
       },
       "function": {
         "gameupdate": {
-          "secretsPathAmplifyAppId": "d2fj7l1p3lrkpn"
+          "secretsPathAmplifyAppId": "d2fj7l1p3lrkpn",
+          "deploymentBucketName": "amplify-boardgamehq-dev-153104-deployment",
+          "s3Key": "amplify-builds/gameupdate-544973622b4b48654148-build.zip"
+        },
+        "boardgamehqfunctionlayer": {
+          "deploymentBucketName": "amplify-boardgamehq-dev-153104-deployment",
+          "s3Key": "amplify-builds/boardgamehqfunctionlayer-LambdaLayerVersionc37bf1ad-build.zip"
         }
       }
     }
