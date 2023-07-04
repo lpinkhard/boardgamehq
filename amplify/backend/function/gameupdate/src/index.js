@@ -180,6 +180,7 @@ exports.handler = async (event) => {
             }),
         };
     } catch (err) {
+        currentPage = 0;
         console.log(err);
         return {
             statusCode: 500,
