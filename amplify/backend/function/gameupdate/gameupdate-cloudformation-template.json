@@ -379,7 +379,7 @@
           "Statement": [
             {
               "Effect": "Allow",
-              "Action": "dynamodb:GetItem",
+              "Action": "dynamodb:Query",
               "Resource": {
                 "Fn::Join": [
                   "",
