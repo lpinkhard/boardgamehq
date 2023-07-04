@@ -84,7 +84,7 @@ async function fetchGameData(page) {
 async function updateGameData(data) {
     const queryParams = {
         TableName: boardGameTable,
-        IndexName: 'bgaId-index',
+        IndexName: 'boardGamesByBgaId',
         KeyConditionExpression: 'bgaId = :bgaId',
         ExpressionAttributeValues: {},
         ProjectionExpression: 'id',
