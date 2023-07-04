@@ -399,7 +399,8 @@
                     "-",
                     {
                       "Ref": "env"
-                    }
+                    },
+                    "/index/bgaId-index"
                   ]
                 ]
               }
