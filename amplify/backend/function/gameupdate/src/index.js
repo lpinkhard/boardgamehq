@@ -22,6 +22,7 @@ Amplify Params - DO NOT EDIT */
 
 const aws = require('aws-sdk');
 const axios = require('axios');
+const { v4: uuidv4 } = require('uuid');
 
 const apiGraphQLAPIIdOutput = process.env.API_BOARDGAMEHQ_GRAPHQLAPIIDOUTPUT;
 const environment = process.env.ENV;
@@ -81,64 +82,58 @@ async function fetchGameData(page) {
  *
  */
 async function updateGameData(data) {
-    const updateParams = {
+    const queryParams = {
         TableName: boardGameTable,
-        Key: {},
-        UpdateExpression: 'SET #name = :name, description = :description, minPlayers = :minPlayers, maxPlayers = :maxPlayers, minPlaytime = :minPlaytime, maxPlaytime = :maxPlaytime, imageUrl = :imageUrl',
-        ExpressionAttributeNames: {
-            '#name': 'name'
-        },
+        IndexName: 'bgaId-index',
+        KeyConditionExpression: 'bgaId = :bgaId',
         ExpressionAttributeValues: {},
-        ReturnValues: 'ALL_NEW'
+        ProjectionExpression: 'id',
     };
 
     const putParams = {
         TableName: boardGameTable,
-        Item: {}
-    }
+        Item: {},
+    };
 
-    // Update all games in the data set
+    // Update or insert all games in the data set
     for (const game of data) {
-        updateParams.Key = {
-            bgaId: game.bgaId
-        }
-        updateParams.ExpressionAttributeValues = {
-            ':name': game.name,
-            ':description': game.description,
-            ':minPlayers': game.minPlayers,
-            ':maxPlayers': game.maxPlayers,
-            ':minPlaytime': game.minPlaytime,
-            ':maxPlaytime': game.maxPlaytime,
-            ':imageUrl': game.imageUrl,
-        };
-
         try {
-            await documentClient.update(updateParams, (err, data) => {
-                if (err) {
-                    if (err.code === 'ValidationException' && err.message.includes('The provided key element does not match the schema')) {
-                        putParams.Item = {
-                            bgaId: game.bgaId,
-                            name: game.name,
-                            description: game.description,
-                            minPlayers: game.minPlayers,
-                            maxPlayers: game.maxPlayers,
-                            minPlaytime: game.minPlaytime,
-                            maxPlaytime: game.maxPlaytime,
-                            imageUrl: game.imageUrl
-                        };
-                        documentClient.put(putParams, (putErr, putData) => {
-                            if (putErr) {
-                                console.log('Error', err);
-                            }
-                        });
-                    } else {
-                        console.log('Error', err);
-                    }
-                }
-            });
-        } catch (err) {
-            try {
+            queryParams.ExpressionAttributeValues = {
+                ':bgaId': game.bgaId,
+            };
+
+            const queryResult = await documentClient.query(queryParams).promise();
+
+            if (queryResult.Count > 0) {
+                // Game exists, update the item
+                const gameId = queryResult.Items[0].id;
+
+                const updateParams = {
+                    TableName: boardGameTable,
+                    Key: {
+                        id: gameId,
+                    },
+                    UpdateExpression: 'SET #name = :name, description = :description, minPlayers = :minPlayers, maxPlayers = :maxPlayers, minPlaytime = :minPlaytime, maxPlaytime = :maxPlaytime, imageUrl = :imageUrl',
+                    ExpressionAttributeNames: {
+                        '#name': 'name',
+                    },
+                    ExpressionAttributeValues: {
+                        ':name': game.name,
+                        ':description': game.description,
+                        ':minPlayers': game.minPlayers,
+                        ':maxPlayers': game.maxPlayers,
+                        ':minPlaytime': game.minPlaytime,
+                        ':maxPlaytime': game.maxPlaytime,
+                        ':imageUrl': game.imageUrl,
+                    },
+                    ReturnValues: 'ALL_NEW',
+                };
+
+                await documentClient.update(updateParams).promise();
+            } else {
+                // Game does not exist, insert a new item
                 putParams.Item = {
+                    id: uuidv4(),
                     bgaId: game.bgaId,
                     name: game.name,
                     description: game.description,
@@ -146,16 +141,13 @@ async function updateGameData(data) {
                     maxPlayers: game.maxPlayers,
                     minPlaytime: game.minPlaytime,
                     maxPlaytime: game.maxPlaytime,
-                    imageUrl: game.imageUrl
+                    imageUrl: game.imageUrl,
                 };
-                documentClient.put(putParams, (putErr, putData) => {
-                    if (putErr) {
-                        console.log('Error', err);
-                    }
-                });
-            } catch (putErr) {
-                console.log(putErr);
+
+                await documentClient.put(putParams).promise();
             }
+        } catch (err) {
+            console.log('Error', err);
         }
     }
 }
@@ -181,7 +173,7 @@ exports.handler = async (event) => {
         };
     } catch (err) {
         currentPage = 0;
-        console.log(err);
+        console.log('Error', err);
         return {
             statusCode: 500,
             body: JSON.stringify({
