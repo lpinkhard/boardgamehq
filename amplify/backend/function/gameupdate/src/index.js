@@ -20,6 +20,7 @@ Parameters will be of the form { Name: 'secretName', Value: 'secretValue', ... }
 	REGION
 Amplify Params - DO NOT EDIT */
 
+const Sentry = require("@sentry/serverless");
 const aws = require('aws-sdk');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
@@ -31,6 +32,11 @@ const boardGameTable = `BoardGame-${apiGraphQLAPIIdOutput}-${environment}`;
 const documentClient = new aws.DynamoDB.DocumentClient();
 
 let currentPage = 0;
+
+Sentry.AWSLambda.init({
+    dsn: "https://e818cb73b2014d50af1f6517b9417de4@o4505493834563584.ingest.sentry.io/4505493836333056",
+    tracesSampleRate: 1.0,
+});
 
 /**
  * Fetches game data from Board Game Atlas API.
@@ -155,7 +161,7 @@ async function updateGameData(data) {
 /**
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
  */
-exports.handler = async (event) => {
+exports.handler = Sentry.AWSLambda.wrapHandler(async (event) => {
     try {
         const games = await fetchGameData(++currentPage);
         if (games.length > 0) {
@@ -172,6 +178,10 @@ exports.handler = async (event) => {
             }),
         };
     } catch (err) {
+        // An error is expected if we go past the end, so report to Sentry only on first page
+        if (currentPage === 0) {
+            Sentry.captureException(err);
+        }
         currentPage = 0;
         console.log('Error', err);
         return {
@@ -181,4 +191,4 @@ exports.handler = async (event) => {
             }),
         };
     }
-};
+});
