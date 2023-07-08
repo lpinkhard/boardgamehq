@@ -34,7 +34,7 @@ const documentClient = new aws.DynamoDB.DocumentClient();
 let currentPage = 0;
 
 Sentry.AWSLambda.init({
-    dsn: "https://e818cb73b2014d50af1f6517b9417de4@o4505493834563584.ingest.sentry.io/4505493836333056",
+    dsn: "https://509797279a334837b2123f7c0b76dc98@o4505493834563584.ingest.sentry.io/4505494618505216",
     tracesSampleRate: 1.0,
 });
 
