@@ -31,7 +31,11 @@ const boardGameTable = `BoardGame-${apiGraphQLAPIIdOutput}-${environment}`;
 
 const documentClient = new aws.DynamoDB.DocumentClient();
 
+const yearThreshold = 1880;
+const limitCount = 10000000;
 let currentPage = 0;
+let year = new Date().getFullYear();
+let lastCount = limitCount;
 
 Sentry.AWSLambda.init({
     dsn: "https://e818cb73b2014d50af1f6517b9417de4@o4505493834563584.ingest.sentry.io/4505493836333056",
@@ -55,12 +59,21 @@ async function fetchGameData(page) {
         .promise();
     const clientId = Parameters[0].Value;
     const skip = (page - 1) * 100;
-    const url = `https://api.boardgameatlas.com/api/search?limit=100&skip=${skip}&fields=id,name,description,min_players,max_players,min_playtime,max_playtime,image_url&client_id=${clientId}`;
+    let url;
+
+    // Too few games below threshold, get them all
+    if (year <= yearThreshold) {
+        url = `https://api.boardgameatlas.com/api/search?lt_year_published=${year}&limit=100&skip=${skip}&fields=id,name,description,min_players,max_players,min_playtime,max_playtime,image_url&order_by=rank&client_id=${clientId}`;
+    } else {
+        url = `https://api.boardgameatlas.com/api/search?year_published=${year}&limit=100&skip=${skip}&fields=id,name,description,min_players,max_players,min_playtime,max_playtime,image_url&order_by=rank&client_id=${clientId}`;
+    }
+
     const response = await axios.get(url);
 
     const games = response.data.games;
+    lastCount = response.data.count;
 
-    const data = new Array();
+    const data = [];
 
     // Process the retrieved game data
     for (const game of games) {
@@ -158,6 +171,22 @@ async function updateGameData(data) {
     }
 }
 
+async function handleProgression() {
+    const skip = (currentPage - 1) * 100;
+
+    // Nothing to fetch next time, go back in history
+    if (skip >= lastCount || skip >= 1000) {
+        lastCount = limitCount;
+        year--;
+        currentPage = 0;
+
+        // Year threshold reached, go back to present
+        if (year < yearThreshold) {
+            year = new Date().getFullYear();
+        }
+    }
+}
+
 /**
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
  */
@@ -166,10 +195,9 @@ exports.handler = Sentry.AWSLambda.wrapHandler(async (event) => {
         const games = await fetchGameData(++currentPage);
         if (games.length > 0) {
             await updateGameData(games);
-        } else {
-            // Start over next time
-            currentPage = 0;
         }
+
+        await handleProgression();
 
         return {
             statusCode: 200,
@@ -178,12 +206,11 @@ exports.handler = Sentry.AWSLambda.wrapHandler(async (event) => {
             }),
         };
     } catch (err) {
-        // An error is expected if we go past the end, so report to Sentry only on first page
-        if (currentPage === 0) {
-            Sentry.captureException(err);
-        }
-        currentPage = 0;
+        Sentry.captureException(err);
         console.log('Error', err);
+
+        await handleProgression();
+
         return {
             statusCode: 500,
             body: JSON.stringify({

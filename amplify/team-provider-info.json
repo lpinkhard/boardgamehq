@@ -28,7 +28,7 @@
         "gameupdate": {
           "secretsPathAmplifyAppId": "d2fj7l1p3lrkpn",
           "deploymentBucketName": "amplify-boardgamehq-dev-153104-deployment",
-          "s3Key": "amplify-builds/gameupdate-2f56757538655a4a6d61-build.zip"
+          "s3Key": "amplify-builds/gameupdate-6e724c34745464435a66-build.zip"
         },
         "boardgamehqfunctionlayer": {
           "deploymentBucketName": "amplify-boardgamehq-dev-153104-deployment",
