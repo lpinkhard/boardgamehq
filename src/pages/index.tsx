@@ -76,7 +76,7 @@ export default function Home({ venues = [], bookings = [] }) {
             <ul>
               {bookings.map((booking: Booking) => (
                   <li key={booking.id}>
-                    {booking.venue.name} - {booking.timeslot.startTime}
+                    {booking.venue.name} - {new Date(booking.timeslot.startTime).toLocaleString()}
                   </li>
               ))}
             </ul>

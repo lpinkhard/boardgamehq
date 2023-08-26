@@ -11,7 +11,8 @@ import {NextPageContext} from "next";
 import awsExports from "../../aws-exports";
 import {useParams} from "next/navigation";
 import {useRouter} from "next/router";
-import {useState} from "react";
+import React, { useState } from 'react';
+import DatePicker from 'react-datepicker';
 
 Amplify.configure({ ...awsExports, ssr: true });
 
@@ -68,6 +69,8 @@ export async function getServerSideProps( req?: any ) {
 export default function Venue({ tables = [], timeslots = [] }) {
     const [selectedTable, setSelectedTable] = useState<string | null>(null);
     const [selectedTimeslot, setSelectedTimeslot] = useState<string | null>(null);
+    const [selectedStartTime, setSelectedStartTime] = useState<Date | null>(null);
+    const [selectedEndTime, setSelectedEndTime] = useState<Date | null>(null);
     const router = useRouter()
 
     async function handleCreateTable(event: any) {
@@ -105,6 +108,10 @@ export default function Venue({ tables = [], timeslots = [] }) {
     async function handleCreateTimeslot(event: any) {
         event.preventDefault();
 
+        if (selectedStartTime == null || selectedEndTime == null) {
+            return
+        }
+
         console.log(JSON.stringify(router))
 
         const form = new FormData(event.target);
@@ -115,8 +122,8 @@ export default function Venue({ tables = [], timeslots = [] }) {
                 query: createTimeslot,
                 variables: {
                     input: {
-                        startTime: form.get('startTime'),
-                        endTime: form.get('endTime'),
+                        startTime: selectedStartTime.toISOString(), // Convert to ISO timestamp
+                        endTime: selectedEndTime.toISOString(),     // Convert to ISO timestamp
                         venueTimeslotsId: router.query.id
                     }
                 }
@@ -201,7 +208,7 @@ export default function Venue({ tables = [], timeslots = [] }) {
                                         checked={selectedTimeslot === timeslot.id}
                                         onChange={() => setSelectedTimeslot(timeslot.id)}
                                     />
-                                    {timeslot.startTime} - {timeslot.endTime}
+                                    {new Date(timeslot.startTime).toLocaleString()} - {new Date(timeslot.endTime).toLocaleTimeString()}
                                 </label>
                             </li>
                         ))}
@@ -253,9 +260,14 @@ export default function Venue({ tables = [], timeslots = [] }) {
                                     <label className="block font-medium" htmlFor="startTime">
                                         Start Time
                                     </label>
-                                    <input
+                                    <DatePicker
+                                        selected={selectedStartTime} // Use state variable here
+                                        onChange={(date) => setSelectedStartTime(date)}
+                                        showTimeSelect
+                                        timeFormat="HH:mm"
+                                        timeIntervals={15}
+                                        dateFormat="MMMM d, yyyy h:mm aa"
                                         className="border rounded px-2 py-1 w-full"
-                                        type="text"
                                         id="startTime"
                                         name="startTime"
                                     />
@@ -264,14 +276,18 @@ export default function Venue({ tables = [], timeslots = [] }) {
                                     <label className="block font-medium" htmlFor="endTime">
                                         End Time
                                     </label>
-                                    <input
+                                    <DatePicker
+                                        selected={selectedEndTime} // Use state variable here
+                                        onChange={(date) => setSelectedEndTime(date)}
+                                        showTimeSelect
+                                        timeFormat="HH:mm"
+                                        timeIntervals={15}
+                                        dateFormat="MMMM d, yyyy h:mm aa"
                                         className="border rounded px-2 py-1 w-full"
-                                        type="text"
                                         id="endTime"
                                         name="endTime"
                                     />
                                 </div>
-
                                 <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                                     Create Timeslot
                                 </button>
