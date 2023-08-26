@@ -9,7 +9,8 @@
       "UnauthRoleName": "amplify-boardgamehq-dev-153104-unauthRole",
       "StackName": "amplify-boardgamehq-dev-153104",
       "StackId": "arn:aws:cloudformation:us-east-1:314711318289:stack/amplify-boardgamehq-dev-153104/dfd090b0-19a5-11ee-a521-0aac1aba32b7",
-      "AmplifyAppId": "d2fj7l1p3lrkpn"
+      "AmplifyAppId": "d2fj7l1p3lrkpn",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-boardgamehq-dev-153104-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
       "auth": {
@@ -28,11 +29,15 @@
         "gameupdate": {
           "secretsPathAmplifyAppId": "d2fj7l1p3lrkpn",
           "deploymentBucketName": "amplify-boardgamehq-dev-153104-deployment",
-          "s3Key": "amplify-builds/gameupdate-6e724c34745464435a66-build.zip"
+          "s3Key": "amplify-builds/gameupdate-32444331614f365a3573-build.zip"
         },
         "boardgamehqfunctionlayer": {
           "deploymentBucketName": "amplify-boardgamehq-dev-153104-deployment",
-          "s3Key": "amplify-builds/boardgamehqfunctionlayer-LambdaLayerVersionc37bf1ad-build.zip"
+          "s3Key": "amplify-builds/boardgamehqfunctionlayer-LambdaLayerVersion68eb9bd3-build.zip"
+        },
+        "boardgamehq13b6d824PostConfirmation": {
+          "deploymentBucketName": "amplify-boardgamehq-dev-153104-deployment",
+          "s3Key": "amplify-builds/boardgamehq13b6d824PostConfirmation-567a506f595674766a6b-build.zip"
         }
       }
     }

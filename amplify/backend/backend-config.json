@@ -40,11 +40,21 @@
   "auth": {
     "boardgamehq13b6d824": {
       "customAuth": false,
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn",
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "boardgamehq13b6d824PostConfirmation",
+          "triggerProvider": "Cognito"
+        }
+      ],
       "frontendAuthConfig": {
-        "mfaConfiguration": "OFF",
+        "mfaConfiguration": "OPTIONAL",
         "mfaTypes": [
-          "SMS"
+          "TOTP"
         ],
         "passwordProtectionSettings": {
           "passwordPolicyCharacters": [],
@@ -64,6 +74,11 @@
     }
   },
   "function": {
+    "boardgamehq13b6d824PostConfirmation": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "boardgamehqfunctionlayer": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -101,6 +116,22 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_boardgamehq13b6d824PostConfirmation_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "boardgamehq13b6d824PostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_boardgamehq13b6d824PostConfirmation_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "boardgamehq13b6d824PostConfirmation"
+        }
+      ]
+    },
     "AMPLIFY_function_boardgamehqfunctionlayer_deploymentBucketName": {
       "usedBy": [
         {

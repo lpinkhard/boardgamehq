@@ -85,7 +85,7 @@ async function fetchGameData(page) {
             maxPlayers: game.max_players,
             minPlaytime: game.min_playtime,
             maxPlaytime: game.max_playtime,
-            imageUrl: game.image_url,
+            imageUrl: game.image_url
         });
     }
 
@@ -132,7 +132,7 @@ async function updateGameData(data) {
                     Key: {
                         id: gameId,
                     },
-                    UpdateExpression: 'SET #name = :name, description = :description, minPlayers = :minPlayers, maxPlayers = :maxPlayers, minPlaytime = :minPlaytime, maxPlaytime = :maxPlaytime, imageUrl = :imageUrl',
+                    UpdateExpression: 'SET #name = :name, description = :description, minPlayers = :minPlayers, maxPlayers = :maxPlayers, minPlaytime = :minPlaytime, maxPlaytime = :maxPlaytime, imageUrl = :imageUrl, updatedAt = :updatedAt',
                     ExpressionAttributeNames: {
                         '#name': 'name',
                     },
@@ -144,6 +144,7 @@ async function updateGameData(data) {
                         ':minPlaytime': game.minPlaytime,
                         ':maxPlaytime': game.maxPlaytime,
                         ':imageUrl': game.imageUrl,
+                        ':updatedAt': new Date().toISOString()
                     },
                     ReturnValues: 'ALL_NEW',
                 };
@@ -161,6 +162,8 @@ async function updateGameData(data) {
                     minPlaytime: game.minPlaytime,
                     maxPlaytime: game.maxPlaytime,
                     imageUrl: game.imageUrl,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
                 };
 
                 await documentClient.put(putParams).promise();
